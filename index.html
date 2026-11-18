@@ -103,6 +103,30 @@ table.map th{color:var(--mut);font-size:11.5px}
 table.map td.l{direction:ltr;text-align:right;font-weight:700}
 .cdot{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.2);vertical-align:-1px;margin-inline-end:4px}
 
+/* presentation */
+#pres{display:none}
+body.present #pres{display:block}
+body.present #panel,body.present #views,body.present #hint,body.present #sel,body.present #bLabels,body.present #bReset,body.present .pres-btn,body.present #pStat{display:none!important}
+body.present #stage{height:100%!important}
+body.present{--ph:0px;--sb:14px}
+#cap{position:absolute;left:50%;transform:translateX(-50%);bottom:96px;width:min(760px,94%);background:rgba(15,23,42,.88);color:#fff;border-radius:16px;padding:12px 18px;text-align:center;z-index:7;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+#cap b{display:block;font-size:20px;font-weight:800;margin-bottom:3px}
+#cap span{display:block;font-size:14.5px;line-height:1.6;color:#dbeafe}
+#cap.in{animation:capin .45s ease}
+@keyframes capin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+#vhud{position:absolute;top:64px;left:10px;display:flex;gap:6px;z-index:7;flex-wrap:wrap;max-width:94%}
+#vhud div{background:rgba(255,255,255,.93);border-radius:11px;padding:4px 10px;text-align:center;box-shadow:0 2px 10px rgba(16,24,40,.1);min-width:62px}
+#vhud small{display:block;font-size:10.5px;color:var(--mut);font-weight:700}
+#vhud b{font-size:15px;font-weight:800}
+#pctl{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;display:flex;align-items:center;gap:8px;z-index:8;background:rgba(255,255,255,.95);padding:8px 10px;border-radius:16px;box-shadow:0 8px 26px rgba(16,24,40,.18);width:min(620px,94%)}
+.bigplay{border:0;background:#dc2626;color:#fff;font-weight:800;font-size:15px;border-radius:12px;padding:9px 18px;cursor:pointer;white-space:nowrap}
+.pbtn{border:1px solid var(--line);background:#fff;border-radius:10px;height:38px;min-width:40px;font-size:15px;font-weight:800;cursor:pointer;color:var(--ink)}
+.pbtn.exit{font-size:12.5px;padding:0 10px;white-space:nowrap}
+.pbar{flex:1;height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;min-width:40px}
+.pbar i{display:block;height:100%;width:0;background:#dc2626;transition:width .4s}
+body:not(.playing) #pPause,body:not(.playing) #pStop{display:none}
+body.playing #pPlay{display:none}
+@media (max-width:899px){#cap{bottom:84px}#cap b{font-size:16px}#cap span{font-size:13px}#vhud{top:58px}#vhud div{min-width:54px;padding:3px 7px}#vhud b{font-size:13px}.bigplay{font-size:14px;padding:9px 12px}}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#e7ebf0;z-index:20;font-weight:800;font-size:15px;color:#475467;flex-direction:column;gap:8px}
 #loading.hide{display:none}
 
@@ -211,6 +235,7 @@ table.map td.l{direction:ltr;text-align:right;font-weight:700}
         <div class="pill" id="pStat"><span class="dot"></span><span id="pText">—</span></div>
         <button class="iconbtn on" id="bLabels" title="إظهار الأسماء">الأسماء</button>
         <button class="iconbtn" id="bReset" title="إعادة العرض">⟲</button>
+        <button class="iconbtn pres-btn" id="bPresent">🎬 وضع العرض</button>
       </div>
       <div class="chips" id="views">
         <button class="chip on" data-v="all">عام</button>
@@ -224,6 +249,16 @@ table.map td.l{direction:ltr;text-align:right;font-weight:700}
     </div>
     <div id="toast"></div>
     <div id="hint">اسحب رأس أي سلك لفكّه وتركيبه · اضغط على أي منفذ لمعرفة اسمه</div>
+    <div id="pres">
+      <div id="cap"><b id="capH"></b><span id="capS"></span></div>
+      <div id="vhud"><div><small>الحرارة</small><b id="hT">--</b></div><div><small>الوضع</small><b id="hM">يدوي</b></div><div><small>السرعة</small><b id="hS">0%</b></div><div><small>RPM</small><b id="hR">0</b></div><div><small>الاتجاه</small><b id="hD">متوقف</b></div></div>
+      <div id="pctl">
+        <button id="pPlay" class="bigplay">▶ تشغيل الفيديو</button>
+        <button id="pPause" class="pbtn"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="currentColor"/></svg></button><button id="pStop" class="pbtn"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="1.5" fill="currentColor"/></svg></button>
+        <div class="pbar"><i id="pProg"></i></div>
+        <button id="pExit" class="pbtn exit">خروج من العرض</button>
+      </div>
+    </div>
     <div id="sel">
       <div class="h"><span class="sw" id="selSw"></span><span id="selName"></span><button class="x" id="selX">✕</button></div>
       <div class="ln" id="selInfo"></div>
@@ -430,8 +465,10 @@ const BX=9.4,BZ0=0,BTOP=1.2;
 })();
 
 /* ---------------- Motor GA25-370 with encoder ---------------- */
-const MX=-5.6,MY=1.25,MZ=6.4; const MOT={};
+const MX=-5.4,MY=3.6,MZ=6.6; const MOT={};
 (function(){
+  const sm=M(0x8b9099,{metalness:.5,roughness:.4});box(4.2,MY-1.1,2.4,sm,MX-0.6,(MY-1.1)/2,MZ);box(5.2,0.25,3.4,sm,MX-0.6,0.125,MZ);
+  [-1.6,0.6].forEach(dx=>{const st=new THREE.Mesh(new THREE.TorusGeometry(1.3,0.07,8,30,Math.PI),sm);st.rotation.y=Math.PI/2;st.position.set(MX+dx,MY-0.05,MZ);scene.add(st)});
   const g=new THREE.Group();g.position.set(MX,MY,MZ);scene.add(g);MOT.g=g;
   cyl(1.25,2.1,M(0xd7dbe0,{metalness:.7,roughness:.3}),-2.35,0,0,g,'x',40);
   for(let i=0;i<4;i++){const a=i*Math.PI/2+Math.PI/4;cyl(0.1,0.06,mats.silver,-3.42,Math.sin(a)*0.85,Math.cos(a)*0.85,g,'x')}
@@ -444,9 +481,22 @@ const MX=-5.6,MY=1.25,MZ=6.4; const MOT={};
   const rot=new THREE.Group();rot.position.set(0,0,0);g.add(rot);MOT.rot=rot;
   cyl(0.55,0.28,M(0x222222),2.26,0,0,rot,'x',30);
   box(0.1,0.3,0.9,M(0x555555),2.42,0,0,rot);
-  cyl(0.2,1.1,mats.tin,-3.95,0,0,rot,'x');
-  const flag=box(0.12,1.0,0.55,M(0xef4444,{roughness:.4}),-4.25,0.5,0,rot);
-  const flag2=box(0.12,0.45,0.35,M(0xfbbf24,{roughness:.4}),-4.25,-0.25,0,rot);
+  cyl(0.2,1.7,mats.tin,-4.2,0,0,rot,'x');
+  // wheel (65 mm hobby wheel)
+  const wg=new THREE.Group();wg.position.set(-5.15,0,0);rot.add(wg);
+  const tr=ctex(6,0.8,170,(c,w,h)=>{c.fillStyle='#202226';c.fillRect(0,0,w,h);c.fillStyle='#34373d';for(let i=0;i<48;i++){const x=i*w/48;c.fillRect(x,0,w/96,h)}c.fillStyle='#4a4e55';c.fillRect(0,h*0.47,w,h*0.06)});
+  tr.wrapS=THREE.RepeatWrapping;
+  const tg=new THREE.CylinderGeometry(3.2,3.2,2.2,72,1,true);tg.rotateZ(Math.PI/2);
+  const tire=new THREE.Mesh(tg,new THREE.MeshStandardMaterial({map:tr,roughness:.9,side:THREE.DoubleSide}));tire.castShadow=true;wg.add(tire);
+  const rub=M(0x1d1f23,{roughness:.9});
+  [-1.1,1.1].forEach(x=>{const rg=new THREE.RingGeometry(2.25,3.2,72);rg.rotateY(x<0?-Math.PI/2:Math.PI/2);const m=new THREE.Mesh(rg,rub);m.position.x=x;m.castShadow=true;wg.add(m)});
+  const rimM=M(0xfacc15,{roughness:.45});
+  const rimC=new THREE.CylinderGeometry(2.25,2.25,2.0,48,1,true);rimC.rotateZ(Math.PI/2);wg.add(new THREE.Mesh(rimC,rimM));
+  const face=new THREE.CylinderGeometry(2.25,2.25,0.18,48);face.rotateZ(Math.PI/2);const fm=new THREE.Mesh(face,rimM);fm.position.x=-0.7;fm.castShadow=true;wg.add(fm);
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;cyl(0.5,0.2,M(0x7a5b00,{roughness:.6}),-0.72,Math.sin(a)*1.35,Math.cos(a)*1.35,wg,'x',20)}
+  cyl(0.55,0.55,mats.silver,-0.95,0,0,wg,'x',24);cyl(0.14,0.1,mats.black,-1.24,0,0,wg,'x');
+  box(0.12,0.75,0.3,M(0xffffff,{roughness:.5}),-1.13,2.65,0,wg);
+  box(0.06,0.5,0.5,M(0xef4444),-0.8,1.65,0,wg);
   // fixed wire exits on JST connector
   const order=['MC_RED','MC_BLK','MC_YEL','MC_GRN','MC_BLU','MC_WHT'];
   const nm={MC_RED:'أحمر (M+)',MC_BLK:'أسود (GND)',MC_YEL:'أصفر (C1)',MC_GRN:'أخضر (C2)',MC_BLU:'أزرق (VCC)',MC_WHT:'أبيض (M−)'};
@@ -482,7 +532,7 @@ function buildLabels(){
   // component names
   const cl=(t,p)=>addLabel(t,p,{h:0.42,fs:52,bg:'rgba(255,255,255,.94)',col:'#111827',rtl:/[؀-ۿ]/.test(t)});
   cl('Arduino UNO',new V3(-2.2,1.9,1.3));cl('L298N',new V3(LX,3.1,LZ-1.4));cl('DHT11 (KY-015)',new V3(BX+1.5,3.9,1.6));
-  cl('محرك 12V مع إنكودر',new V3(MX,3.0,MZ));cl('مصدر 12V',new V3(PX,1.6,PZ));cl('بريدبورد',new V3(BX-2.2,1.9,1.5));
+  cl('محرك 12V مع إنكودر وعجلة',new V3(MX+0.5,MY+2.0,MZ));cl('مصدر 12V',new V3(PX,1.6,PZ));cl('بريدبورد',new V3(BX-2.2,1.9,1.5));
 }
 
 /* ---------------- wires (both ends removable, as in the photos) ---------------- */
@@ -611,6 +661,7 @@ function refreshUI(){
   $('#mSpd').style.width=(Math.abs(r.rpm)/2)+'%';
   $('#msgs').innerHTML=r.msgs.map(m=>'<li class="'+m[0]+'">'+m[1]+'</li>').join('');
   $('#cManual').style.opacity=ST.mode===1?0.45:1;
+  updHud(r);
   if(sel)updateSel();
   if(challenge&&r.nOk===WIRES.length){const t=(performance.now()-challenge.t0)/1000;challenge=null;toast('🎉 أحسنت! أكملت التوصيل كاملاً في '+fmt(t),'ok',4200);refreshUI()}
 }
@@ -664,7 +715,7 @@ function rayAt(p){const r=dom.getBoundingClientRect();ndc.set(p.x/r.width*2-1,-(
 
 dom.addEventListener('pointerdown',e=>{
   if(!e.isPrimary)return;const p=evp(e);
-  const hit=pickPlug(p,e.pointerType==='touch'?28:18);
+  const hit=document.body.classList.contains('present')?null:pickPlug(p,e.pointerType==='touch'?28:18);
   down={x:p.x,y:p.y,hit,id:e.pointerId,moved:false};
   if(hit){$('#hint').style.display='none';controls.enabled=false;try{dom.setPointerCapture(e.pointerId)}catch(_){}}
 });
@@ -691,9 +742,9 @@ function endPointer(e){
   else if(!down.moved){
     if(down.hit){select(down.hit.w,down.hit.i);toast('تم تحديد الطرف '+(down.hit.i+1)+' من سلك '+down.hit.w.nm+' — اضغط على منفذ لتركيبه','',2000)}
     else tap(p,e.pointerType==='touch')}
-  down=null;controls.enabled=true;dom.style.cursor='default'}
+  down=null;controls.enabled=!PL.running;dom.style.cursor='default'}
 dom.addEventListener('pointerup',endPointer);
-dom.addEventListener('pointercancel',()=>{if(drag){const en=drag.w.ends[drag.i];en.loose.y=1.5;buildWire(drag.w);drag=null;showRing(null);refreshUI()}down=null;controls.enabled=true});
+dom.addEventListener('pointercancel',()=>{if(drag){const en=drag.w.ends[drag.i];en.loose.y=1.5;buildWire(drag.w);drag=null;showRing(null);refreshUI()}down=null;controls.enabled=!PL.running});
 function tap(p,touch){
   if(sel){const pn=pickPin(p,touch?30:18,x=>compatible(sel,selEnd,x));if(pn&&pn.id!==sel.ends[selEnd].pin){attach(sel,selEnd,pn.id);showDots(sel,selEnd);return}}
   rayAt(p);const hits=ray.intersectObjects(WIRES.map(w=>w.tube),false);
@@ -705,7 +756,7 @@ const controls=new THREE.OrbitControls(camera,dom);
 controls.enableDamping=true;controls.dampingFactor=0.09;controls.minDistance=3;controls.maxDistance=70;controls.maxPolarAngle=Math.PI*0.495;controls.screenSpacePanning=true;controls.rotateSpeed=0.8;
 
 /* ---------------- views ---------------- */
-const VIEWS={all:[[-1,27,30],[-2,0,0.8]],top:[[-1.5,38,0.6],[-1.5,0,0]],ard:[[1.2,8.5,8.5],[1.0,1,0.2]],drv:[[-9.2,8,4.6],[-10.5,1,-3.2]],mot:[[-1.5,6.5,13.5],[-5.6,1.2,6.2]],sen:[[14.4,9.8,-6.4],[10.9,1.6,0.9]],pwr:[[-13,7,8],[-13,0.6,0]]};
+const VIEWS={all:[[-1,27,30],[-2,0,0.8]],top:[[-1.5,38,0.6],[-1.5,0,0]],ard:[[1.2,8.5,8.5],[1.0,1,0.2]],drv:[[-9.2,8,4.6],[-10.5,1,-3.2]],mot:[[-18,9,18],[-8,3,6.2]],sen:[[14.4,9.8,-6.4],[10.9,1.6,0.9]],pwr:[[-13,7,8],[-13,0.6,0]]};
 let tw=null;
 function flyTo(pos,tgt,ms){tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:pos,t1:tgt,s:performance.now(),d:ms||750}}
 function viewPos(k){const v=VIEWS[k];const t=new V3(...v[1]);const off=new V3(...v[0]).sub(t);off.multiplyScalar(Math.max(1,(k==='all'?(isMobile()?0.95:1.15):0.95)/camera.aspect));return [t.clone().add(off),t]}
@@ -737,8 +788,9 @@ function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width
 new ResizeObserver(resize).observe(stage);window.addEventListener('resize',()=>{setPanel(panelOpen);resize()});
 let last=performance.now(),rpmNow=0,enc=0,lastSer=0,tick=0;
 function loop(now){
-  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  const rawDt=Math.min(0.25,(now-last)/1000),dt=Math.min(0.05,rawDt);last=now;
   if(tw){const k=Math.min(1,(now-tw.s)/tw.d),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;camera.position.lerpVectors(tw.p0,tw.p1,e);controls.target.lerpVectors(tw.t0,tw.t1,e);if(k>=1)tw=null}
+  plTick(rawDt);
   controls.update();
   if(RES){
     rpmNow+=(RES.rpm-rpmNow)*Math.min(1,dt*3.2);
@@ -753,6 +805,60 @@ function loop(now){
   }
   WIRES.forEach(w=>w.ends.forEach((e,i)=>{if(e.mesh)e.mesh.scale.setScalar(w===sel&&i===selEnd?1+Math.sin(now/180)*0.1:1)}));
   renderer.render(scene,camera);requestAnimationFrame(loop)}
+
+/* ---------------- presentation mode + video ---------------- */
+const PAUSESVG='<svg width="16" height="16" viewBox="0 0 16 16"><rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="currentColor"/></svg>',PLAYSVG='<svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z" fill="currentColor"/></svg>';
+const PL={running:false,paused:false,vt:0,tok:0,anims:[],waits:[]};
+const ease=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+function vsleep(ms){const tok=PL.tok;return new Promise(res=>PL.waits.push({at:PL.vt+ms,res})).then(()=>{if(tok!==PL.tok)throw 'stop'})}
+function vanim(ms,fn){const tok=PL.tok;return new Promise(res=>PL.anims.push({t0:PL.vt,ms,fn,res})).then(()=>{if(tok!==PL.tok)throw 'stop'})}
+function plTick(dt){if(!PL.running||PL.paused)return;PL.vt+=dt*1000;
+  PL.anims=PL.anims.filter(a=>{const t=Math.min(1,(PL.vt-a.t0)/a.ms);a.fn(t);if(t>=1){a.res();return false}return true});
+  PL.waits=PL.waits.filter(w=>{if(PL.vt>=w.at){w.res();return false}return true})}
+function plStop(){PL.tok++;const a=PL.anims,w=PL.waits;PL.anims=[];PL.waits=[];a.forEach(x=>x.res());w.forEach(x=>x.res());PL.running=false;PL.paused=false;showRing(null);document.body.classList.remove('playing');controls.enabled=true;$('#pPause').innerHTML=PAUSESVG}
+function shot(pa,ta){const t=new V3(...ta);const off=new V3(...pa).sub(t);off.multiplyScalar(Math.max(1,0.95/camera.aspect));return [t.clone().add(off),t]}
+function camTo(pt,ms){const [p,t]=pt;const p0=camera.position.clone(),t0=controls.target.clone();return vanim(ms||1400,k=>{const e=ease(k);camera.position.lerpVectors(p0,p,e);controls.target.lerpVectors(t0,t,e)})}
+function cap(h,sub){$('#capH').textContent=h;$('#capS').textContent=sub||'';const c=$('#cap');c.classList.remove('in');void c.offsetWidth;c.classList.add('in')}
+function setProg(k,n){$('#pProg').style.width=(k/n*100)+'%'}
+async function moveEnd(w,i,pinId,ms){const e=w.ends[i];if(e.pin===pinId)return;const old=e.pin;if(old){e.loose.copy(endFrame(w,i).pos);e.pin=null;rebuildPin(old)}
+  const a=e.loose.clone(),P=PINS[pinId],b=P.pos.clone().addScaledVector(P.dir,0.15);
+  w.mat.emissive=new THREE.Color(w.c).multiplyScalar(0.35);showRing(P,true);
+  await vanim(ms||1150,k=>{const t=ease(k);e.loose.lerpVectors(a,b,t);e.loose.y+=Math.sin(Math.PI*t)*2.4;buildWire(w)});
+  e.pin=pinId;rebuildPin(pinId);buildWire(w);showRing(null);w.mat.emissive.setHex(0);refreshUI()}
+async function connect(id,order){const w=WBY[id];for(const i of order)if(w.ends[i].mov)await moveEnd(w,i,w.ends[i].cor)}
+function ramp(key,to,ms){const from=ST[key];return vanim(ms,k=>{ST[key]=key==='manual'?Math.round(from+(to-from)*k):+(from+(to-from)*k).toFixed(1);refreshUI()})}
+const STEPS=[
+ async()=>{cap('🔧 مكونات المشروع','Arduino UNO · درايفر L298N · حساس DHT11 · محرك 12V بإنكودر وعجلة · مصدر 12V');await camTo(viewPos('all'),1600);await vsleep(2800)},
+ async()=>{cap('١) حساس الحرارة DHT11','الحساس مركّب في البريدبورد: S ← D10 · الوسط (+) ← 5V · السالب (−) ← GND');await camTo(shot([7,13,-13],[6,1.3,-0.4]));await connect('s10',[1,0]);await connect('v5',[1,0]);await connect('g5',[1,0]);await vsleep(900)},
+ async()=>{cap('٢) أسلاك الإنكودر','الأزرق ← 5V والأسود ← GND (في عمودي الحساس) · الأصفر ← D2 · الأخضر ← D3');await camTo(shot([3,16,17],[2,1.5,1.5]));for(const id of ['mblu','mblk','myel','mgrn'])await connect(id,[1]);await vsleep(900)},
+ async()=>{cap('٣) أسلاك التحكم من الدرايفر','بعد نزع جمبر ENA: ENA ← D9 (PWM للسرعة) · IN1 ← D7 · IN2 ← D8 (للاتجاه)');await camTo(shot([-3.5,13,11],[-4.5,1.3,-1.8]));for(const id of ['ena','in1','in2'])await connect(id,[0,1]);await vsleep(900)},
+ async()=>{cap('٤) الأرضي المشترك','سلك GND من الدرايفر إلى GND الأردوينو — بدونه لا تعمل إشارات التحكم');await connect('lgnd',[0,1]);await vsleep(1000)},
+ async()=>{cap('٥) أسلاك المحرك','الأحمر ← OUT1 · الأبيض ← OUT2');await camTo(shot([-15,10,13],[-9.5,2,1]));await connect('mred',[1]);await connect('mwht',[1]);await vsleep(900)},
+ async()=>{cap('٦) مصدر 12V','الأحمر ← +12V · الأسود ← GND في الدرايفر — يضيء مؤشر الدرايفر');await camTo(shot([-16,8,9],[-13,1,-0.5]));await connect('psup',[1]);await connect('psun',[1]);await vsleep(1200)},
+ async()=>{cap('✓ اكتمل التوصيل','كل الأسلاك في أماكنها الصحيحة · الأردوينو موصول بالحاسوب عبر USB (COM4)');await camTo(viewPos('all'),1600);await vsleep(2600)},
+ async()=>{cap('▶ التشغيل اليدوي من LabVIEW','السرعة ← PWM على D9 · الاتجاه أمامي (IN1=HIGH ، IN2=LOW)');await camTo(shot([-18,9,18],[-8,3,6.2]),1800);await ramp('manual',35,1600);await vsleep(1800);await ramp('manual',70,1400);await vsleep(1800);await ramp('manual',100,1200);await vsleep(2200)},
+ async()=>{cap('↺ عكس الاتجاه','من مفتاح Direction: IN1=LOW ، IN2=HIGH فيدور المحرك بالعكس');await ramp('manual',0,1200);await vsleep(500);ST.dir=1;refreshUI();await ramp('manual',75,1400);await vsleep(3500);await ramp('manual',0,1200);ST.dir=0;refreshUI();await vsleep(400)},
+ async()=>{cap('🌡 الوضع التلقائي حسب الحرارة','≤10°C توقف · 10–40°C سرعة متناسبة · أكثر من 40°C سرعة كاملة');ST.temp=6;ST.mode=1;refreshUI();await vsleep(1500);await ramp('temp',45,10000);await vsleep(2200);await ramp('temp',24,3000);await vsleep(2000)},
+ async()=>{cap('⏹ نهاية العرض','اضغط ▶ لإعادة التشغيل ، أو اخرج من وضع العرض لتجرّب التوصيل بيدك');ST.mode=0;ST.manual=0;ST.temp=24;refreshUI();await camTo(viewPos('all'),1800)}
+];
+async function runVideo(){
+  plStop();const tok=PL.tok;PL.running=true;PL.vt=0;controls.enabled=false;select(null);challenge=null;tw=null;
+  document.body.classList.add('playing');
+  Object.assign(ST,{power:true,mode:0,manual:0,dir:0,temp:24});detachAll();refreshUI();
+  try{for(let k=0;k<STEPS.length;k++){setProg(k,STEPS.length);await STEPS[k]()}setProg(1,1)}
+  catch(e){if(e!=='stop')console.error(e)}
+  if(tok===PL.tok){PL.running=false;document.body.classList.remove('playing');controls.enabled=true}
+  syncControls()}
+function syncControls(){$('#sManual').value=ST.manual;$('#vManual').textContent=ST.manual+'%';$('#sTemp').value=ST.temp;$('#vTemp').textContent=ST.temp+'°C';
+  $$('#segMode button').forEach(b=>b.classList.toggle('on',+b.dataset.v===ST.mode));$$('#segDir button').forEach(b=>b.classList.toggle('on',+b.dataset.v===ST.dir));$('#tPower').classList.toggle('on',ST.power)}
+function updHud(r){if(!document.body.classList.contains('present'))return;
+  $('#hT').textContent=r.tempRead===-99?'--':r.tempRead.toFixed(1)+'°C';$('#hS').textContent=r.speedPct+'%';$('#hR').textContent=Math.round(Math.abs(r.rpm));$('#hD').textContent=r.rpm>0?'أمامي ↻':r.rpm<0?'عكسي ↺':'متوقف';$('#hM').textContent=ST.mode?'تلقائي':'يدوي'}
+$('#bPresent').onclick=()=>{document.body.classList.add('present');select(null);setPanel(false);cap('وضع العرض','اضغط «تشغيل الفيديو» لمشاهدة تركيب المشروع خطوة بخطوة ثم تشغيل المحرك');view('all');refreshUI()};
+$('#pExit').onclick=()=>{plStop();document.body.classList.remove('present');syncControls();setPanel(false);refreshUI()};
+$('#pPlay').onclick=()=>runVideo();
+$('#pPause').onclick=()=>{if(!PL.running)return;PL.paused=!PL.paused;$('#pPause').innerHTML=PL.paused?PLAYSVG:PAUSESVG};
+$('#pStop').onclick=()=>{plStop();cap('تم إيقاف العرض','اضغط «تشغيل الفيديو» للبدء من جديد');syncControls();refreshUI()};
+
 
 window.__sim={WIRES,PINS,sp,endFrame,plugTip,wireStatus,ST,get RES(){return RES}};
 /* ---------------- init ---------------- */
